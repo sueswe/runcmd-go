@@ -5,10 +5,11 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 )
 
-var version string = "0.2"
+var version string = "0.3"
 
 func main() {
 	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
@@ -18,8 +19,8 @@ func main() {
 
 	command := os.Args[1]
 	parameter := os.Args[2:]
-	//parameter := "test*"
-	cmd := exec.Command(command, parameter)
+	parameterlist := strings.Join(parameter, " ")
+	cmd := exec.Command(command, parameterlist)
 	infoLog.Println("exec: ", command)
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
