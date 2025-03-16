@@ -21,9 +21,10 @@ func main() {
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 	cmd := exec.Command(command, parameterlist)
-	infoLog.Println("exec: ", command)
+	infoLog.Println("exec: ", command+" "+parameterlist)
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
+	//cmd.Stdout = os.Stdout
 	if err != nil {
 		errorLog.Println(err)
 		os.Exit(3)
@@ -35,7 +36,6 @@ func main() {
 		os.Exit(3)
 	}
 	for scanner.Scan() {
-		// outout:
 		infoLog.Println(scanner.Text())
 	}
 	if scanner.Err() != nil {
