@@ -17,7 +17,7 @@ func run_with_p(command string, p string) {
 	errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 	fields := strings.Fields(p)
 	cmd := exec.Command(command, fields...)
-	infoLog.Println("running: ", command+p)
+	infoLog.Println("running: ", command+" "+p)
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
