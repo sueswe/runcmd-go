@@ -13,7 +13,6 @@ import (
 var version string = "0.4.0"
 
 func run_with_p(command string, p string) {
-	fmt.Println("go4it")
 	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 	fields := strings.Fields(p)
