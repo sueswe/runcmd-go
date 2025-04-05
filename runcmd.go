@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -9,7 +10,7 @@ import (
 	"syscall"
 )
 
-var version string = "0.3"
+var version string = "0.3.1"
 
 func main() {
 	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
@@ -20,8 +21,10 @@ func main() {
 	command := os.Args[1]
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
-	cmd := exec.Command(command, parameterlist)
-	infoLog.Println("exec: ", command+" "+parameterlist)
+	fields := strings.Fields(parameterlist)
+
+	cmd := exec.Command(command, fields[1:]...)
+	infoLog.Println("running: ", command+" "+parameterlist)
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
@@ -36,7 +39,7 @@ func main() {
 		os.Exit(3)
 	}
 	for scanner.Scan() {
-		infoLog.Println(scanner.Text())
+		fmt.Println(scanner.Text())
 	}
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
