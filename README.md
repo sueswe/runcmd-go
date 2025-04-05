@@ -13,6 +13,5 @@ apt install build-essential
 ## build and deploy?
 
 ~~~
-make build
-make deploy
+make build && make deploy && make clean
 ~~~
