@@ -8,16 +8,35 @@ import (
 	"os/exec"
 	"strings"
 	"syscall"
+	"time"
 )
 
-var version string = "0.4.0"
+var version string = "0.4.3"
 
-func run_with_p(command string, p string) {
-	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
+func CheckErr(e error) {
+	if e != nil {
+		fmt.Println(e)
+	}
+}
+
+func writeLog(message string) {
+	filename := "/tmp/runcmd.log"
+	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	CheckErr(err)
+	defer f.Close()
+	_, err2 := f.WriteString(message)
+	CheckErr(err2)
+}
+
+func run_with_p(command string, p string) string {
+	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
 	fields := strings.Fields(p)
 	cmd := exec.Command(command, fields...)
 	infoLog.Println("running: ", command+" "+p)
+	// Startzeitpunkt ermitteln:
+	t1 := time.Now()
+	infoLog.Println("Starttime: " + t1.String())
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
@@ -32,7 +51,7 @@ func run_with_p(command string, p string) {
 		os.Exit(3)
 	}
 	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+		fmt.Println("out:" + scanner.Text())
 	}
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
@@ -40,8 +59,13 @@ func run_with_p(command string, p string) {
 		errorLog.Fatalln("Scanner.Error: ", scanner.Err())
 	}
 	err = cmd.Wait()
+	// Endzeitpunkt ermitteln:
+	t2 := time.Now()
+	diff := t2.Sub(t1)
+
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
+		infoLog.Println("Runtime: " + diff.String())
 		// try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			ws := exitError.Sys().(syscall.WaitStatus)
@@ -56,16 +80,21 @@ func run_with_p(command string, p string) {
 			os.Exit(120)
 		}
 	} else {
+		infoLog.Println("Runtime: " + diff.String())
 		infoLog.Println("Program exited OK.")
 	}
+	return diff.String()
 }
 
-func run(command string) {
-	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
+func run(command string) string {
+	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
 
 	cmd := exec.Command(command)
 	infoLog.Println("running: ", command)
+	// Startzeitpunkt ermitteln:
+	t1 := time.Now()
+	infoLog.Println("Starttime: " + t1.String())
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
 	//cmd.Stdout = os.Stdout
@@ -88,8 +117,14 @@ func run(command string) {
 		errorLog.Fatalln("Scanner.Error: ", scanner.Err())
 	}
 	err = cmd.Wait()
+	t2 := time.Now()
+	diff := t2.Sub(t1)
+
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
+		// Endzeitpunkt ermitteln:
+
+		infoLog.Println("Runtime: " + diff.String())
 		// try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			ws := exitError.Sys().(syscall.WaitStatus)
@@ -104,22 +139,27 @@ func run(command string) {
 			os.Exit(120)
 		}
 	} else {
+		infoLog.Println("Runtime: " + diff.String())
 		infoLog.Println("Program exited OK.")
 	}
+	return diff.String()
 }
 
 func main() {
-	infoLog := log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime)
+	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 	infoLog.Println("runcmd, Version ", version)
 
+	runtime := ""
 	command := os.Args[1]
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 	if len(parameter) != 0 {
-		run_with_p(command, parameterlist)
+		runtime = run_with_p(command, parameterlist)
 	} else {
-		run(command)
+		runtime = run(command)
 	}
+	// 0250404; 2025-04-07_08:36:58; b32n59c ; lgkk_rest_caller.pl ; +w start +p lwbwzbz7 -d 0 ; t(s): 3 ; returncode: 0
+	writeLog("Laufzeit: " + runtime + "\n")
 }
