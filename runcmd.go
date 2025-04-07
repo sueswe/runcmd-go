@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -20,7 +21,8 @@ func CheckErr(e error) {
 }
 
 func writeLog(message string) {
-	filename := "/tmp/runcmd.log"
+	home := os.Getenv("HOME")
+	filename := home + "/runcmd_logging_rzomstp/runcmd.log"
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	CheckErr(err)
 	defer f.Close()
@@ -28,7 +30,7 @@ func writeLog(message string) {
 	CheckErr(err2)
 }
 
-func run_with_p(command string, p string) string {
+func run_with_p(command string, p string) (string, int) {
 	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
 	fields := strings.Fields(p)
@@ -63,6 +65,7 @@ func run_with_p(command string, p string) string {
 	t2 := time.Now()
 	diff := t2.Sub(t1)
 
+	rtc := -1
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
 		infoLog.Println("Runtime: " + diff.String())
@@ -71,10 +74,10 @@ func run_with_p(command string, p string) string {
 			ws := exitError.Sys().(syscall.WaitStatus)
 			//exitCode = ws.ExitStatus()
 			errorLog.Println("ExitStatus: ", ws.ExitStatus())
-			rtc := ws.ExitStatus()
+			rtc = ws.ExitStatus()
 			//rtc, _ = strconv.Atoi(rtc)
 			//errorLog.Println(cmd.Stderr)
-			os.Exit(rtc)
+			//os.Exit(rtc)
 		} else {
 			errorLog.Fatalln("Could not get exit code for failed program!")
 			os.Exit(120)
@@ -82,11 +85,12 @@ func run_with_p(command string, p string) string {
 	} else {
 		infoLog.Println("Runtime: " + diff.String())
 		infoLog.Println("Program exited OK.")
+		rtc = 0
 	}
-	return diff.String()
+	return diff.String(), rtc
 }
 
-func run(command string) string {
+func run(command string) (string, int) {
 	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
 
@@ -120,6 +124,7 @@ func run(command string) string {
 	t2 := time.Now()
 	diff := t2.Sub(t1)
 
+	rtc := -1
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
 		// Endzeitpunkt ermitteln:
@@ -130,10 +135,10 @@ func run(command string) string {
 			ws := exitError.Sys().(syscall.WaitStatus)
 			//exitCode = ws.ExitStatus()
 			errorLog.Println("ExitStatus: ", ws.ExitStatus())
-			rtc := ws.ExitStatus()
+			rtc = ws.ExitStatus()
 			//rtc, _ = strconv.Atoi(rtc)
 			//errorLog.Println(cmd.Stderr)
-			os.Exit(rtc)
+			//os.Exit(rtc)
 		} else {
 			errorLog.Fatalln("Could not get exit code for failed program!")
 			os.Exit(120)
@@ -141,8 +146,9 @@ func run(command string) string {
 	} else {
 		infoLog.Println("Runtime: " + diff.String())
 		infoLog.Println("Program exited OK.")
+		rtc = 0
 	}
-	return diff.String()
+	return diff.String(), rtc
 }
 
 func main() {
@@ -152,14 +158,25 @@ func main() {
 	infoLog.Println("runcmd, Version ", version)
 
 	runtime := ""
+	returncode := -1
 	command := os.Args[1]
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 	if len(parameter) != 0 {
-		runtime = run_with_p(command, parameterlist)
+		runtime, returncode = run_with_p(command, parameterlist)
 	} else {
-		runtime = run(command)
+		runtime, returncode = run(command)
 	}
-	// 0250404; 2025-04-07_08:36:58; b32n59c ; lgkk_rest_caller.pl ; +w start +p lwbwzbz7 -d 0 ; t(s): 3 ; returncode: 0
-	writeLog("Laufzeit: " + runtime + "\n")
+	r := strconv.Itoa(returncode)
+	// 20250404; 2025-04-07_08:36:58; b32n59c ; lgkk_rest_caller.pl ; +w start +p lwbwzbz7 -d 0 ; t(s): 3 ; returncode: 0
+	t := time.Now()
+	// const YYYYMMDD = "2006-01-02"
+	yyyymmdd := (t.Format("2006-01-02"))
+	jobname := os.Getenv("SMA_JOBNAME")
+	if len(jobname) == 0 {
+		jobname = "n/a"
+	}
+
+	writeLog(yyyymmdd + "; " + t.Format(time.RFC3339) + "; " + jobname + "; " + command + "; " + parameterlist + "; " + "t(s): " + runtime + "; " + "returncode: " + r + "\n")
+
 }
