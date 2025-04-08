@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var version string = "0.5.1"
+var version string = "0.5.2"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -69,13 +69,14 @@ func run_with_p(command string, p string) (string, int) {
 	err = cmd.Wait()
 	// Endzeitpunkt ermitteln:
 	t2 := time.Now()
-	diff := t2.Sub(t1)
-	diff2 := diff.Round(time.Second).String()
+	diff := t2.Sub(t1).Seconds()
+	// diff2 := diff.Round(time.Second).String()
+	diff2 := fmt.Sprintf("%.2f", diff)
 	// infoLog.Println("DIFF2: " + diff2)
 	rtc := -1
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
-		infoLog.Println("Runtime: " + diff.String())
+		infoLog.Println("Runtime: " + diff2)
 		// try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			ws := exitError.Sys().(syscall.WaitStatus)
@@ -90,7 +91,7 @@ func run_with_p(command string, p string) (string, int) {
 			os.Exit(120)
 		}
 	} else {
-		infoLog.Println("Runtime: " + diff.String())
+		infoLog.Println("Runtime: " + diff2)
 		infoLog.Println("Program exited OK.")
 		rtc = 0
 	}
@@ -107,8 +108,10 @@ func main() {
 	runtime := ""
 	returncode := -1
 	command := os.Args[1]
+
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
+
 	runtime, returncode = run_with_p(command, parameterlist)
 
 	r := strconv.Itoa(returncode)
@@ -124,5 +127,5 @@ func main() {
 	}
 
 	writeLog(yyyymmdd + "; " + t.Format(time.RFC3339) + "; " + jobname + "; " + command + "; " + parameterlist + "; " + "t(s): " + runtime + "; " + "returncode: " + r + "\n")
-
+	os.Exit(returncode)
 }
