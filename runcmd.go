@@ -32,6 +32,7 @@ func writeLog(message string) {
 	CheckErr(err2)
 }
 
+// returns runtime as string, returncode as int:
 func run_with_p(command string, p string) (string, int) {
 	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
@@ -69,7 +70,8 @@ func run_with_p(command string, p string) (string, int) {
 	// Endzeitpunkt ermitteln:
 	t2 := time.Now()
 	diff := t2.Sub(t1)
-
+	diff2 := diff.Round(time.Second).String()
+	// infoLog.Println("DIFF2: " + diff2)
 	rtc := -1
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
@@ -92,7 +94,8 @@ func run_with_p(command string, p string) (string, int) {
 		infoLog.Println("Program exited OK.")
 		rtc = 0
 	}
-	return diff.String(), rtc
+	// return diff.String(), rtc
+	return diff2, rtc
 }
 
 func main() {
