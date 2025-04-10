@@ -25,7 +25,7 @@ func writeLog(message string) {
 	home := os.Getenv("HOME")
 	current_time := time.Now()
 	ts := current_time.Format("2006-01-02")
-	filename := home + "/runcmd_logging_rzomstp/runcmd_" + ts + ".log"
+	filename := home + "/runcmd_logging_rzomstp/runcmd_" + ts + ".csv"
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	CheckErr(err)
 	defer f.Close()
@@ -92,10 +92,10 @@ func run_with_p(command string, p string) (string, int) {
 			os.Exit(120)
 		}
 	} else {
+		rtc = 0
 		infoLog.Println("Runtime: " + diff2)
 		r := strconv.Itoa(rtc)
 		infoLog.Println("Exitstatus: " + r + ", Program exited OK.")
-		rtc = 0
 	}
 	// return diff.String(), rtc
 	return diff2, rtc
@@ -135,5 +135,6 @@ func main() {
 	}
 
 	writeLog(yyyymmdd + "; " + t.Format(time.RFC3339) + "; " + jobname + "; " + command + "; " + parameterlist + "; " + "t(s): " + runtime + "; " + "returncode: " + r + "\n")
+
 	os.Exit(returncode)
 }
