@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var version string = "0.5.4"
+var version string = "0.5.5"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -106,6 +106,12 @@ func main() {
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 	infoLog.Println("runcmd, Version ", version)
+	if len(os.Args) <= 1 {
+		infoLog.Println("Nothing to do.")
+		os.Exit(1)
+	}
+	// la := strconv.Itoa(len(os.Args))
+	// fmt.Println("Länge: " + la)
 
 	runtime := ""
 	returncode := -1
@@ -114,7 +120,6 @@ func main() {
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 
-	//
 	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
 		// does not exists
 	} else {
