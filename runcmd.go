@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var version string = "0.5.5"
+var version string = "0.5.6"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -35,8 +35,8 @@ func writeLog(message string) {
 
 // returns runtime as string, returncode as int:
 func run_with_p(command string, p string) (string, int) {
-	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR ", log.Ldate|log.Ltime)
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
 	if len(p) == 0 {
 		p = " "
 	}
@@ -59,8 +59,11 @@ func run_with_p(command string, p string) (string, int) {
 		errorLog.Println(err)
 		os.Exit(3)
 	}
+	c := 1
 	for scanner.Scan() {
-		fmt.Println(" " + scanner.Text())
+		z := strconv.Itoa(c)
+		fmt.Println(z + ": " + scanner.Text())
+		c = c + 1
 	}
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
@@ -102,7 +105,7 @@ func run_with_p(command string, p string) (string, int) {
 }
 
 func main() {
-	infoLog := log.New(os.Stdout, "INFO ", log.Ldate|log.Ltime)
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 	infoLog.Println("runcmd, Version ", version)
@@ -110,8 +113,19 @@ func main() {
 		infoLog.Println("Nothing to do.")
 		os.Exit(1)
 	}
-	// la := strconv.Itoa(len(os.Args))
-	// fmt.Println("Länge: " + la)
+
+	user := os.Getenv("USER")
+	host := os.Getenv("HOSTNAME")
+	yyyymmdd := os.Getenv("SMA_SCHEDULE_DATE")
+	if len(yyyymmdd) == 0 {
+		yyyymmdd = "no SMA_SCHEDULE_DATE"
+	}
+	jobname := os.Getenv("SMA_USER_SPECIFIED_JOBNAME")
+	if len(jobname) == 0 {
+		jobname = "no SMA_JOBNAME"
+	}
+
+	infoLog.Println("System: " + user + "@" + host + ", Job: " + jobname)
 
 	runtime := ""
 	returncode := -1
@@ -128,17 +142,7 @@ func main() {
 	runtime, returncode = run_with_p(command, parameterlist)
 
 	r := strconv.Itoa(returncode)
-
 	t := time.Now()
-	yyyymmdd := os.Getenv("SMA_SCHEDULE_DATE")
-	if len(yyyymmdd) == 0 {
-		yyyymmdd = "no SMA_SCHEDULE_DATE"
-	}
-	jobname := os.Getenv("SMA_USER_SPECIFIED_JOBNAME")
-	if len(jobname) == 0 {
-		jobname = "no SMA_JOBNAME"
-	}
-
 	writeLog(yyyymmdd + "; " + t.Format(time.RFC3339) + "; " + jobname + "; " + command + "; " + parameterlist + "; " + "t(s): " + runtime + "; " + "returncode: " + r + "\n")
 
 	os.Exit(returncode)
