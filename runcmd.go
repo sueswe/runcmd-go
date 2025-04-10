@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var version string = "0.5.3"
+var version string = "0.5.4"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -60,7 +60,7 @@ func run_with_p(command string, p string) (string, int) {
 		os.Exit(3)
 	}
 	for scanner.Scan() {
-		fmt.Println("out:" + scanner.Text())
+		fmt.Println(" " + scanner.Text())
 	}
 	if scanner.Err() != nil {
 		cmd.Process.Kill()
@@ -93,7 +93,8 @@ func run_with_p(command string, p string) (string, int) {
 		}
 	} else {
 		infoLog.Println("Runtime: " + diff2)
-		infoLog.Println("Program exited OK.")
+		r := strconv.Itoa(rtc)
+		infoLog.Println("Exitstatus: " + r + ", Program exited OK.")
 		rtc = 0
 	}
 	// return diff.String(), rtc
