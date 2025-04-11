@@ -18,6 +18,7 @@ echo "------------------------------------"
 
 
 export APPRELEASEVERSION=$(git rev-list -1 HEAD)
+echo "Release: $APPRELEASEVERSION"
 
 echo ""
 echo "compiling: go build runcmd.go"
