@@ -18,21 +18,21 @@ echo "------------------------------------"
 
 echo ""
 echo "compiling: go build runcmd.go"
-go build runcmd.go -o /tmp/runcmd || {
+go build -v -x -o /tmp/runcmd || {
     echo "Status: $?"
     exit 4
 }
 
 echo ""
 echo "compiling: GOOS=aix GOARCH=ppc64 go build -o runcmd.aix"
-GOOS=aix GOARCH=ppc64 go build -o /tmp/runcmd.aix || {
+GOOS=aix GOARCH=ppc64 go build -v -o /tmp/runcmd.aix || {
     echo "Status: $?"
     exit 4
 }
 
 echo ""
 echo "compiling: GOOS=windows GOARCH=amd64 go build -o runcmd.win64"
-GOOS=windows GOARCH=amd64 go build -o /tmp/runcmd.win64 || {
+GOOS=windows GOARCH=amd64 go build -v -o /tmp/runcmd.win64 || {
     echo "Status: $?"
     exit 4
 }
