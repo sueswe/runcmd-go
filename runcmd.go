@@ -109,7 +109,7 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
-	infoLog.Println("runcmd, Version ", version + ", Release: " + release)
+	infoLog.Println("runcmd, Version ", version + ", Release: " + AppReleaseVersion)
 	if len(os.Args) <= 1 {
 		infoLog.Println("Nothing to do.")
 		os.Exit(1)
