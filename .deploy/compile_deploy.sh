@@ -18,7 +18,7 @@ echo "------------------------------------"
 
 echo ""
 echo "compiling: go build runcmd.go"
-go build runcmd.go /tmp/runcmd || {
+go build runcmd.go -o /tmp/runcmd || {
     echo "Status: $?"
     exit 4
 }
@@ -41,7 +41,7 @@ GOOS=windows GOARCH=amd64 go build -o /tmp/runcmd.win64 || {
 
 # nun entsprechende scp's durchführen:
 echo "running viceversa.sh stp,testta3,14T4 runcmd \$HOME/bin"
-cd /tmp/
+cd /tmp/ || exit 1
 viceversa.sh stp,testta3,14T4 runcmd \$HOME/bin || {
     echo "Status: $?"
     exit 4
