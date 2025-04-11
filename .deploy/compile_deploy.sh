@@ -16,23 +16,26 @@ env | grep PATH
 env | grep LOADED
 echo "------------------------------------"
 
+
+export APPRELEASEVERSION=$(git rev-list -1 HEAD)
+
 echo ""
 echo "compiling: go build runcmd.go"
-go build -v -o /tmp/runcmd || {
+go build -ldflags "-X main.AppReleaseVersion=$APPRELEASEVERSION" -v -o /tmp/runcmd || {
     echo "Status: $?"
     exit 4
 }
 
 echo ""
 echo "compiling: GOOS=aix GOARCH=ppc64 go build -o runcmd.aix"
-GOOS=aix GOARCH=ppc64 go build -v -o /tmp/runcmd.aix || {
+GOOS=aix GOARCH=ppc64 go build -ldflags "-X main.AppReleaseVersion=$APPRELEASEVERSION" -v -o /tmp/runcmd.aix || {
     echo "Status: $?"
     exit 4
 }
 
 echo ""
 echo "compiling: GOOS=windows GOARCH=amd64 go build -o runcmd.win64"
-GOOS=windows GOARCH=amd64 go build -v -o /tmp/runcmd.win64 || {
+GOOS=windows GOARCH=amd64 go build -ldflags "-X main.AppReleaseVersion=$APPRELEASEVERSION" -v -o /tmp/runcmd.win64 || {
     echo "Status: $?"
     exit 4
 }
