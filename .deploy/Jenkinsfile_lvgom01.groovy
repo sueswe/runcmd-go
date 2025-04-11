@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh ' rm -rf ~/compile/runcmd-go || { echo "nothing to delete." }'
+                        sh ' rm -rf ~/compile/runcmd-go '
                         sh ' cd ~/compile/ && git clone git@lvgom01.sozvers.at:repositories/runcmd-go.git '
                     } catch(err) {
                         throw err
