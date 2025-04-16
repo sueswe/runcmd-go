@@ -105,11 +105,11 @@ func run_with_p(command string, p string) (string, int) {
 }
 
 func main() {
-	AppReleaseVersion := os.Getenv("AppReleaseVersion")
+	REV := "DEV"
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
-	infoLog.Println("runcmd, Version ", version + ", Release: " + AppReleaseVersion)
+	infoLog.Println("runcmd, Version ", version + ", commit:" + REV)
 	if len(os.Args) <= 1 {
 		infoLog.Println("Nothing to do.")
 		os.Exit(1)
