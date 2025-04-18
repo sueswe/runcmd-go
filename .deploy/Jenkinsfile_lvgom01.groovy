@@ -10,8 +10,7 @@ pipeline {
     }
 
     stages {
-        
-        stage('LVGOM01:') {
+        stage('git clone') {
             when {
                 branch "master"
             }
@@ -24,9 +23,24 @@ pipeline {
                         throw err
                     }
                 }
+            }
+        }
+        stage('compile') {
+            steps {
                 script {
                     try {
-                        sh ' cd ~/compile/runcmd-go && .deploy/compile_deploy.sh '
+                        sh ' cd ~/compile/runcmd-go && .deploy/compile.sh '
+                    } catch(err) {
+                        throw err
+                    }
+                }
+            }
+        }
+        stage('deploy TEST TA3') {
+            steps {
+                script {
+                    try {
+                        sh ' cd ~/compile/runcmd-go && .deploy/deploy.sh '
                     } catch(err) {
                         throw err
                     }
@@ -35,4 +49,3 @@ pipeline {
         }
     }
 }
-
