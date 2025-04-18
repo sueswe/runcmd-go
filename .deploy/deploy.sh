@@ -19,3 +19,10 @@ cd /tmp/ || exit 1
     echo "Status: $?"
     exit 2
 }
+
+cd /tmp/ || exit 1
+"$HOME"/bin/vicecersa.sh lgkk,testta3,19Pt runcmd \$HOME/bin || {
+    echo "Status: $?"
+    exit 2
+}
+
