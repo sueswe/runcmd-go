@@ -17,7 +17,8 @@ env | grep LOADED
 echo "------------------------------------"
 
 
-export APPRELEASEVERSION=$(git rev-list -1 HEAD)
+APPRELEASEVERSION=$(git rev-list -1 HEAD runcmd.go)
+export APPRELEASEVERSION
 echo "REV: $APPRELEASEVERSION"
 
 echo ""
@@ -46,7 +47,7 @@ GOOS=windows GOARCH=amd64 go build -ldflags "-X main.REV=$APPRELEASEVERSION" -v 
 # nun entsprechende scp's durchführen:
 echo "running viceversa.sh stp,testta3,14T4 runcmd \$HOME/bin"
 cd /tmp/ || exit 1
-$HOME/bin/vicecersa.sh stp,testta3,14T4 runcmd \$HOME/bin || {
+"$HOME"/bin/vicecersa.sh stp,testta3,14T4 runcmd \$HOME/bin || {
     echo "Status: $?"
     exit 4
 }
