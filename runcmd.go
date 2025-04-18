@@ -14,7 +14,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.5.6"
+var version string = "0.5.7"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -37,7 +37,7 @@ func writeLog(message string) {
 // returns runtime as string, returncode as int:
 func run_with_p(command string, p string) (string, int) {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime)
 	if len(p) == 0 {
 		p = " "
 	}
@@ -109,7 +109,7 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
-	infoLog.Println("runcmd, Version ", version + ", " + REV)
+	infoLog.Println("runcmd, Version ", version+", "+REV)
 	if len(os.Args) <= 1 {
 		infoLog.Println("Nothing to do.")
 		os.Exit(1)
