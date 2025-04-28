@@ -149,17 +149,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	debugLog.Println("Path found: " + path)
-
-	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
-		// does not exists
-		debugLog.Println("programm not in current directory, maybe in PATH")
-        command = path + "/" + command
-	} else {
-	 	debugLog.Println("program is in current directory, or exists as full path")
-	    command = "./" + command
-	}
-
+    
+	debugLog.Println("Found: " + path)
+	command = path
 	runtime, returncode = run_with_p(command, parameterlist)
 
 	r := strconv.Itoa(returncode)
