@@ -44,8 +44,8 @@ func run_with_p(command string, p string) (string, int) {
 	fields := strings.Fields(p)
 
 	// https://devdocs.io/go/os/exec/index#Command
-	// If name contains no path separators, Command uses 
-	// LookPath to resolve name to a complete path if possible. Otherwise it uses name directly as Path. 
+	// If name contains no path separators, Command uses
+	// LookPath to resolve name to a complete path if possible. Otherwise it uses name directly as Path.
 	cmd := exec.Command(command, fields...)
 	infoLog.Println("running: ", command+" "+p)
 	// Startzeitpunkt ermitteln:
@@ -141,17 +141,18 @@ func main() {
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 
-
 	path, err := exec.LookPath(command)
 	if errors.Is(err, exec.ErrDot) {
+		debugLog.Println("IF reached: " + path)
+		command = path
 		err = nil
 	}
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		debugLog.Println("ERR reached: " + path)
+		command = "./" + command
 	}
-    
-	debugLog.Println("Found: " + path)
-	command = path
+
 	runtime, returncode = run_with_p(command, parameterlist)
 
 	r := strconv.Itoa(returncode)
