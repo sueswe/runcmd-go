@@ -145,12 +145,11 @@ func main() {
 	if errors.Is(err, exec.ErrDot) {
 		debugLog.Println("IF reached: " + path)
 		command = path
+		command = "./" + command
 		err = nil
 	}
 	if err != nil {
-		// log.Fatal(err)
-		debugLog.Println("ERR reached: " + path)
-		command = "./" + command
+		log.Fatal(err)
 	}
 
 	runtime, returncode = run_with_p(command, parameterlist)
