@@ -14,7 +14,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.5.7"
+var version string = "0.5.8"
 
 func CheckErr(e error) {
 	if e != nil {
@@ -135,11 +135,12 @@ func main() {
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 
-	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
-		// does not exists
-	} else {
-		command = "./" + command
-	}
+	// if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
+	// 	// does not exists
+	// } else {
+	// 	command = "./" + command
+	// }
+
 	runtime, returncode = run_with_p(command, parameterlist)
 
 	r := strconv.Itoa(returncode)
