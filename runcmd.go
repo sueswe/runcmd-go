@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	//"errors"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -42,6 +42,10 @@ func run_with_p(command string, p string) (string, int) {
 		p = " "
 	}
 	fields := strings.Fields(p)
+
+	// https://devdocs.io/go/os/exec/index#Command
+	// If name contains no path separators, Command uses 
+	// LookPath to resolve name to a complete path if possible. Otherwise it uses name directly as Path. 
 	cmd := exec.Command(command, fields...)
 	infoLog.Println("running: ", command+" "+p)
 	// Startzeitpunkt ermitteln:
@@ -49,7 +53,6 @@ func run_with_p(command string, p string) (string, int) {
 	infoLog.Println("Starttime: " + t1.String())
 	stdout, err := cmd.StdoutPipe()
 	cmd.Stderr = os.Stderr
-	//cmd.Stdout = os.Stdout
 	if err != nil {
 		errorLog.Println(err)
 		os.Exit(3)
@@ -60,6 +63,7 @@ func run_with_p(command string, p string) (string, int) {
 		errorLog.Println(err)
 		os.Exit(3)
 	}
+
 	c := 1
 	for scanner.Scan() {
 		z := strconv.Itoa(c)
@@ -71,6 +75,7 @@ func run_with_p(command string, p string) (string, int) {
 		cmd.Wait()
 		errorLog.Fatalln("Scanner.Error: ", scanner.Err())
 	}
+
 	err = cmd.Wait()
 	// Endzeitpunkt ermitteln:
 	t2 := time.Now()
@@ -107,8 +112,9 @@ func run_with_p(command string, p string) (string, int) {
 
 func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	//warningLog := log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+	debugLog := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
+
 	infoLog.Println("runcmd, Version ", version+", "+REV)
 	if len(os.Args) <= 1 {
 		infoLog.Println("Nothing to do.")
@@ -119,11 +125,11 @@ func main() {
 	host := os.Getenv("HOSTNAME")
 	yyyymmdd := os.Getenv("SMA_SCHEDULE_DATE")
 	if len(yyyymmdd) == 0 {
-		yyyymmdd = "no SMA_SCHEDULE_DATE"
+		yyyymmdd = "NO_SMA_SCHEDULE_DATE"
 	}
 	jobname := os.Getenv("SMA_USER_SPECIFIED_JOBNAME")
 	if len(jobname) == 0 {
-		jobname = "no SMA_JOBNAME"
+		jobname = "NO_SMA_JOBNAME"
 	}
 
 	infoLog.Println("System: " + user + "@" + host + ", Job: " + jobname)
@@ -135,11 +141,17 @@ func main() {
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
 
-	// if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
-	// 	// does not exists
-	// } else {
-	// 	command = "./" + command
-	// }
+
+	
+
+
+	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
+		// does not exists
+		debugLog.Println("programm not in current directory, maybe in PATH")
+	} else {
+	 	debugLog.Println("program is in current directory, or exists as full path")
+	    // command = "./" + command
+	}
 
 	runtime, returncode = run_with_p(command, parameterlist)
 
