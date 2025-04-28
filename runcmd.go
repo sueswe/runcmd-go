@@ -142,15 +142,22 @@ func main() {
 	parameterlist := strings.Join(parameter, " ")
 
 
-	
-
+	path, err := exec.LookPath(command)
+	if errors.Is(err, exec.ErrDot) {
+		err = nil
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+	debugLog("Path found: " + path)
 
 	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
 		// does not exists
 		debugLog.Println("programm not in current directory, maybe in PATH")
+        command = path + "/" + command
 	} else {
 	 	debugLog.Println("program is in current directory, or exists as full path")
-	    // command = "./" + command
+	    command = "./" + command
 	}
 
 	runtime, returncode = run_with_p(command, parameterlist)
