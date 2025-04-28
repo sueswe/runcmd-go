@@ -149,7 +149,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	debugLog("Path found: " + path)
+	debugLog.Println("Path found: " + path)
 
 	if _, err := os.Stat(command); errors.Is(err, os.ErrNotExist) {
 		// does not exists
