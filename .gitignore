@@ -25,5 +25,5 @@ go.work.sum
 .env
 
 runcmd
-test.sh
+*test.sh
 
