@@ -36,7 +36,7 @@ pipeline {
                 }
             }
         }
-        stage('deploy TEST TA3') {
+        stage('deploy') {
             steps {
                 script {
                     try {

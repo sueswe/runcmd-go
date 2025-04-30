@@ -14,15 +14,22 @@ echo "------------------------------------"
 
 
 
-# cd /tmp/ || exit 1
-# "$HOME"/bin/vicecersa.sh stp,testta3,14T4 runcmd \$HOME/bin || {
-#     echo "Status: $?"
-#     exit 2
-# }
+echo '
+### LINUX #########################################################
+'
 
-# cd /tmp/ || exit 1
-# "$HOME"/bin/vicecersa.sh lgkk,testta3,19Pt runcmd \$HOME/bin || {
-#     echo "Status: $?"
-#     exit 2
-# }
+UMG="
+stp,testta3,14T4
+lgkk,testta3,19Pt
+"
 
+cd /tmp/ || exit 1
+"$HOME"/bin/vicecersa.sh ${UMG} runcmd \$HOME/bin/ || {
+    echo "Status: $?"
+    exit 2
+}
+
+
+echo '
+### AIX #########################################################
+'
