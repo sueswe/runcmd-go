@@ -16,7 +16,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.0"
+var version string = "0.6.1"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 
@@ -29,7 +29,7 @@ func CheckErr(e error) {
 func writeLog(target string, message string) {
 	current_time := time.Now()
 	ts := current_time.Format(time.DateOnly)
-	filename := target + "runcmd_" + ts + ".csv"
+	filename := target + "/runcmd_" + ts + ".csv"
 
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	CheckErr(err)
@@ -39,12 +39,13 @@ func writeLog(target string, message string) {
 }
 
 func readConfig(filename string) int {
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	_, err := os.ReadFile(filename)
 	if err != nil {
-		fmt.Println("no config " + filename + " found")
+		infoLog.Println("(no config " + filename + " found)")
 		return 1
 	} else {
-		log.Println("Reading config: " + filename)
+		infoLog.Println("Reading config: " + filename)
 		return 0
 	}
 
@@ -127,22 +128,31 @@ func run_with_p(command string, p string) (string, int) {
 }
 
 func main() {
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	debugLog := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
+
 	whereToLogTo := "nowhere"
 	if readConfig(configFile) == 0 {
+		// Static: the location of the configFile:
 		config, err := toml.LoadFile(home + "/.runcmd.toml")
 		CheckErr(err)
+
 		baseDir := config.Get("default.RUNCMD_BASE").(string)
 		runcmdPath := config.Get("default.RUNCMD_PATH").(string)
+
+		mderr := os.Mkdir(os.Getenv(baseDir)+"/"+runcmdPath, 0750)
+		if mderr != nil && !os.IsExist(err) {
+			//log.Println(err)
+			debugLog.Println(baseDir + "/" + runcmdPath + " directory already exist.")
+		}
+
 		whereToLogTo = os.Getenv(baseDir) + "/" + runcmdPath
 
 	} else {
 		log.Println("Default-Log verwenden.")
 		whereToLogTo = home + "/runcmd_logging_rzomstp"
 	}
-
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	debugLog := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 
 	infoLog.Println("runcmd, Version ", version+", "+REV)
 	if len(os.Args) <= 1 {
