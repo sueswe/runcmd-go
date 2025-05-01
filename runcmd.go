@@ -11,10 +11,14 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/pelletier/go-toml"
 )
 
 var REV = "DEV"
-var version string = "0.5.8"
+var version string = "0.6.0"
+var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
+var home = os.Getenv("HOME")
 
 func CheckErr(e error) {
 	if e != nil {
@@ -22,16 +26,28 @@ func CheckErr(e error) {
 	}
 }
 
-func writeLog(message string) {
-	home := os.Getenv("HOME")
+func writeLog(target string, message string) {
 	current_time := time.Now()
-	ts := current_time.Format("2006-01-02")
-	filename := home + "/runcmd_logging_rzomstp/runcmd_" + ts + ".csv"
+	ts := current_time.Format(time.DateOnly)
+	filename := target + "runcmd_" + ts + ".csv"
+
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	CheckErr(err)
 	defer f.Close()
 	_, err2 := f.WriteString(message)
 	CheckErr(err2)
+}
+
+func readConfig(filename string) int {
+	_, err := os.ReadFile(filename)
+	if err != nil {
+		fmt.Println("no config " + filename + " found")
+		return 1
+	} else {
+		log.Println("Reading config: " + filename)
+		return 0
+	}
+
 }
 
 // returns runtime as string, returncode as int:
@@ -111,6 +127,19 @@ func run_with_p(command string, p string) (string, int) {
 }
 
 func main() {
+	whereToLogTo := "nowhere"
+	if readConfig(configFile) == 0 {
+		config, err := toml.LoadFile(home + "/.runcmd.toml")
+		CheckErr(err)
+		baseDir := config.Get("default.RUNCMD_BASE").(string)
+		runcmdPath := config.Get("default.RUNCMD_PATH").(string)
+		whereToLogTo = os.Getenv(baseDir) + "/" + runcmdPath
+
+	} else {
+		log.Println("Default-Log verwenden.")
+		whereToLogTo = home + "/runcmd_logging_rzomstp"
+	}
+
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	debugLog := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
 	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
@@ -156,7 +185,7 @@ func main() {
 
 	r := strconv.Itoa(returncode)
 	t := time.Now()
-	writeLog(yyyymmdd + "; " + t.Format(time.RFC3339) + "; " + jobname + "; " + command + "; " + parameterlist + "; " + "t(s): " + runtime + "; " + "returncode: " + r + "\n")
+	writeLog(whereToLogTo, yyyymmdd+"; "+t.Format(time.RFC3339)+"; "+jobname+"; "+command+"; "+parameterlist+"; "+"t(s): "+runtime+"; "+"returncode: "+r+"\n")
 
 	os.Exit(returncode)
 }
