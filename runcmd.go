@@ -16,7 +16,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.1"
+var version string = "0.6.2"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 
@@ -26,6 +26,7 @@ func CheckErr(e error) {
 	}
 }
 
+// writes a LogFile
 func writeLog(target string, message string) {
 	current_time := time.Now()
 	ts := current_time.Format(time.DateOnly)
@@ -38,6 +39,7 @@ func writeLog(target string, message string) {
 	CheckErr(err2)
 }
 
+// check for a ConfigFile
 func readConfig(filename string) int {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	_, err := os.ReadFile(filename)
@@ -150,7 +152,7 @@ func main() {
 		whereToLogTo = os.Getenv(baseDir) + "/" + runcmdPath
 
 	} else {
-		log.Println("Default-Log verwenden.")
+		infoLog.Println("Trying to use a default-log location.")
 		whereToLogTo = home + "/runcmd_logging_rzomstp"
 	}
 
