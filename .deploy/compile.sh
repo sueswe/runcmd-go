@@ -13,7 +13,7 @@ env | grep LOADED
 pwd
 echo "------------------------------------"
 
-APPRELEASEVERSION=$(git rev-list -1 HEAD runcmd.go)
+APPRELEASEVERSION=$(git rev-list -1 HEAD)
 export APPRELEASEVERSION
 echo "REV: $APPRELEASEVERSION"
 
