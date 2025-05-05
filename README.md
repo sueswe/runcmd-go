@@ -1,12 +1,12 @@
 # runcmd-go
 
-runcmd, written in Go
+runcmd, written in Go.
+
+Used for logging for automation.
 
 ## Usage
 
-
-**runcmd** command parameter1 parameter2 ...
-
+`runcmd command parameter1 parameter2 ...`
 
 * Example:
 
@@ -14,9 +14,9 @@ runcmd, written in Go
 runcmd ls -l -t -r *.c
 ~~~
 
-## Configuration
+## Optional: configuration
 
-You can create a config-file: `$HOME/.runcmd.toml`
+You can (but you don't have to) create a config-file: `$HOME/.runcmd.toml`
 with following content:
 
 ~~~toml
@@ -25,7 +25,7 @@ RUNCMD_BASE = "HOME"
 RUNCMD_PATH = "runcmd_logging"
 ~~~
 
-where RUNCMD_BASE has to be an Environment-variable,
-and RUNCMD_PATH is a directory name that will be
+where `RUNCMD_BASE` has to be an Environment-variable,
+and `RUNCMD_PATH` is a directory name that will be
 automatically created if it does no exist.
 
