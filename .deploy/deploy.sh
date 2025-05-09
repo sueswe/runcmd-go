@@ -20,13 +20,13 @@ echo '
 
 stages="
 stp,testta3,14T4
-lgkk,testta3,19Pt
+lgkk,testta3
 "
 
 for UMG in ${stages}
 do
     cd /tmp/ || exit 1
-    "$HOME"/bin/vicecersa.sh ${UMG} runcmd \$HOME/bin/ || {
+    "$HOME"/bin/vicecersa.sh "${UMG}" runcmd \$HOME/bin/ || {
         echo "Status: $?"
         exit 2
     }
