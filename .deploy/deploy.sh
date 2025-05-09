@@ -21,6 +21,7 @@ echo '
 stages="
 stp,testta3,14T4
 lgkk,testta3
+stplgk,testta3
 "
 
 for UMG in ${stages}
