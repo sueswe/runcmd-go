@@ -20,9 +20,10 @@ echo '
 
 stages="
 stp,testta3,14T4
-lgkk,testta3
-stplgk,testta3
+lgkk,testta3,14Te
+lgkk,testta3,19Pt
 "
+
 
 for UMG in ${stages}
 do
