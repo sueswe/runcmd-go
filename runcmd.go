@@ -16,7 +16,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.2"
+var version string = "0.6.3"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 
@@ -179,8 +179,17 @@ func main() {
 	returncode := -1
 	command := os.Args[1]
 
+	c1 := strings.Split(command, " ")
+
 	parameter := os.Args[2:]
 	parameterlist := strings.Join(parameter, " ")
+
+	if len(c1) > 1 {
+		// fmt.Println("Command split: ", c1[0])
+		// fmt.Println("Param0 split: ", c1[1:])
+		parameterlist = strings.Join(c1[1:], " ")
+		command = c1[0]
+	}
 
 	path, err := exec.LookPath(command)
 	if errors.Is(err, exec.ErrDot) {
