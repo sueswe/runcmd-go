@@ -22,7 +22,7 @@ with following content:
 ~~~toml
 [default]
 RUNCMD_BASE = "HOME"   
-RUNCMD_PATH = "runcmd_logging"
+RUNCMD_PATH = "logging/runcmd_logging"
 ~~~
 
 where `RUNCMD_BASE` has to be an Environment-variable,
