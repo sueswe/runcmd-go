@@ -2,7 +2,7 @@
 
 runcmd, written in Go.
 
-Used for logging for automation.
+Used for logging in automation and batch processing, etc.
 
 ## Usage
 
