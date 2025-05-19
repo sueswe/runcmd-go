@@ -16,13 +16,16 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.3"
+var version string = "0.6.5"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
+var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+var debugLog = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+var errorLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 
 func CheckErr(e error) {
 	if e != nil {
-		fmt.Println(e)
+		infoLog.Println(e)
 	}
 }
 
@@ -41,7 +44,7 @@ func writeLog(target string, message string) {
 
 // check for a ConfigFile
 func readConfig(filename string) int {
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	// infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	_, err := os.ReadFile(filename)
 	if err != nil {
 		infoLog.Println("(no config " + filename + " found)")
@@ -55,8 +58,7 @@ func readConfig(filename string) int {
 
 // returns runtime as string, returncode as int:
 func run_with_p(command string, p string) (string, int) {
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime)
+
 	if len(p) == 0 {
 		p = " "
 	}
@@ -93,10 +95,11 @@ func run_with_p(command string, p string) (string, int) {
 		cmd.Process.Kill()
 		cmd.Wait()
 		errorLog.Fatalln("Scanner.Error: ", scanner.Err())
+		//errorLog.Println("")
+
 	}
 
 	err = cmd.Wait()
-	// Endzeitpunkt ermitteln:
 	t2 := time.Now()
 	diff := t2.Sub(t1).Seconds()
 	// diff2 := diff.Round(time.Second).String()
@@ -105,7 +108,7 @@ func run_with_p(command string, p string) (string, int) {
 	rtc := -1
 	if err != nil {
 		errorLog.Println("Program exited not as expected.")
-		infoLog.Println("Runtime: " + diff2)
+		infoLog.Println("Runtime: " + diff2 + " sec")
 		// try to get the exit code
 		if exitError, ok := err.(*exec.ExitError); ok {
 			ws := exitError.Sys().(syscall.WaitStatus)
@@ -121,7 +124,7 @@ func run_with_p(command string, p string) (string, int) {
 		}
 	} else {
 		rtc = 0
-		infoLog.Println("Runtime: " + diff2)
+		infoLog.Println("Runtime: " + diff2 + " sec")
 		r := strconv.Itoa(rtc)
 		infoLog.Println("Exitstatus: " + r + ", Program exited OK.")
 	}
@@ -130,30 +133,23 @@ func run_with_p(command string, p string) (string, int) {
 }
 
 func main() {
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	debugLog := log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-	//errorLog := log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
 
 	whereToLogTo := "nowhere"
+
 	if readConfig(configFile) == 0 {
 		// Static: the location of the configFile:
 		config, err := toml.LoadFile(home + "/.runcmd.toml")
 		CheckErr(err)
-
 		baseDir := config.Get("default.RUNCMD_BASE").(string)
 		runcmdPath := config.Get("default.RUNCMD_PATH").(string)
-
 		mderr := os.Mkdir(os.Getenv(baseDir)+"/"+runcmdPath, 0750)
-		if mderr != nil && !os.IsExist(err) {
-			//log.Println(err)
-			debugLog.Println(baseDir + "/" + runcmdPath + " directory already exist.")
-		}
-
+		CheckErr(mderr)
 		whereToLogTo = os.Getenv(baseDir) + "/" + runcmdPath
-
 	} else {
 		infoLog.Println("Trying to use a default-log location.")
 		whereToLogTo = home + "/runcmd_logging_rzomstp"
+		mkdirResult := os.Mkdir(whereToLogTo, 0750)
+		CheckErr(mkdirResult)
 	}
 
 	infoLog.Println("runcmd, Version ", version+", "+REV)

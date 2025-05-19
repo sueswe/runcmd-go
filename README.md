@@ -2,7 +2,7 @@
 
 runcmd, written in Go.
 
-Used for logging for automation.
+Used for logging in automation and batch processing, etc.
 
 ## Usage
 
@@ -22,7 +22,7 @@ with following content:
 ~~~toml
 [default]
 RUNCMD_BASE = "HOME"   
-RUNCMD_PATH = "runcmd_logging"
+RUNCMD_PATH = "logging/runcmd_logging"
 ~~~
 
 where `RUNCMD_BASE` has to be an Environment-variable,
