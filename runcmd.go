@@ -16,7 +16,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.5"
+var version string = "0.6.6"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -198,8 +198,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	runtime, returncode = run_with_p(command, parameterlist)
-
+	// RUNCMD_DRY exported?
+	if os.Getenv("RUNCMD_DRY") != "" {
+		returncode = 0
+		t := time.Now()
+		r := "undef"
+		fmt.Println(command, parameter)
+		writeLog(whereToLogTo, yyyymmdd+"; "+t.Format(time.RFC3339)+"; "+jobname+"; "+command+"; "+parameterlist+"; "+"t(s): "+runtime+"; "+"returncode: "+r+"\n")
+		infoLog.Println("(Just RUNCMD_DRY exported. Nothing happened.)")
+		os.Exit(returncode)
+	} else {
+		runtime, returncode = run_with_p(command, parameterlist)
+	}
 	r := strconv.Itoa(returncode)
 	t := time.Now()
 	writeLog(whereToLogTo, yyyymmdd+"; "+t.Format(time.RFC3339)+"; "+jobname+"; "+command+"; "+parameterlist+"; "+"t(s): "+runtime+"; "+"returncode: "+r+"\n")
