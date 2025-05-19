@@ -21,7 +21,6 @@ echo '
 stages="
 stp,testta3,14T4
 lgkk,testta3,14Te
-lgkk,testta3,19Pt
 "
 
 
@@ -38,3 +37,16 @@ done
 echo '
 ### AIX #########################################################
 '
+
+stages="
+stp,testta2,14T4
+"
+
+for UMG in ${stages}
+do
+    cd /tmp/ || exit 1
+    "$HOME"/bin/vicecersa.sh "${UMG}" runcmd.aix \$HOME/bin/ || {
+        echo "Status: $?"
+        exit 2
+    }
+done
