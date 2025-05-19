@@ -45,7 +45,7 @@ stp,testta2,14T4
 for UMG in ${stages}
 do
     cd /tmp/ || exit 1
-    "$HOME"/bin/vicecersa.sh "${UMG}" runcmd.aix \$HOME/bin/ || {
+    "$HOME"/bin/vicecersa.sh "${UMG}" runcmd.aix \$HOME/bin/ runcmd || {
         echo "Status: $?"
         exit 2
     }
