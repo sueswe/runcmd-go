@@ -20,8 +20,8 @@ var version string = "0.6.6"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-var debugLog = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-var errorLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime)
+var debugLog = log.New(os.Stdout, "DEBUG\t", log.Ldate|log.Ltime|log.Lshortfile)
+var errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
 
 func CheckErr(e error) {
 	if e != nil {
@@ -189,13 +189,15 @@ func main() {
 
 	path, err := exec.LookPath(command)
 	if errors.Is(err, exec.ErrDot) {
-		debugLog.Println("IF reached: " + path)
+		// debugLog.Println("IF reached: " + path)
 		command = path
 		command = "./" + command
 		err = nil
 	}
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		errorLog.Println(err)
+		os.Exit(126)
 	}
 
 	// RUNCMD_DRY exported?
