@@ -23,6 +23,7 @@ var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 var debugLog = log.New(os.Stdout, "DEBUG\t", log.Ldate|log.Ltime|log.Lshortfile)
 var errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
 
+// check the error
 func CheckErr(e error) {
 	if e != nil {
 		infoLog.Println(e)
@@ -154,7 +155,7 @@ func main() {
 
 	infoLog.Println("runcmd, Version ", version+", "+REV)
 	if len(os.Args) <= 1 {
-		infoLog.Println("Nothing to do.")
+		infoLog.Println("Nothing to do. Have a nice day.")
 		os.Exit(1)
 	}
 
