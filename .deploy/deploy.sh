@@ -18,11 +18,7 @@ echo '
 ### LINUX #########################################################
 '
 
-stages="
-stp,testta3
-lgkk,testta3
-"
-
+stages="stp,testta3 lgkk,testta3 stplgk,test"
 
 for UMG in ${stages}
 do
@@ -37,10 +33,6 @@ done
 echo '
 ### AIX #########################################################
 '
-
-# stages="
-# stp,testta2
-# "
 
 # for UMG in ${stages}
 # do
