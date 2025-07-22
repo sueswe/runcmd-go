@@ -12,14 +12,9 @@ env | grep PATH
 env | grep LOADED
 echo "------------------------------------"
 
-
-
-echo '
-### LINUX #########################################################
-'
+echo '### LINUX #########################################################'
 
 stages="stp,testta3 lgkk,testta3 stplgk,test"
-
 for UMG in ${stages}
 do
     cd /tmp/ || exit 1
@@ -29,16 +24,14 @@ do
     }
 done
 
+echo '### AIX #########################################################'
 
-echo '
-### AIX #########################################################
-'
-
-# for UMG in ${stages}
-# do
-#     cd /tmp/ || exit 1
-#     "$HOME"/bin/vicecersa.sh "${UMG}" runcmd.aix \$HOME/bin/ runcmd || {
-#         echo "Status: $?"
-#         exit 2
-#     }
-# done
+stages="stp,testta2,11T4 stp,testta2,19Pt"
+for UMG in ${stages}
+do
+    cd /tmp/ || exit 1
+    "$HOME"/bin/vicecersa.sh "${UMG}" runcmd.aix \$HOME/bin/ runcmd || {
+        echo "Status: $?"
+        exit 2
+    }
+done
