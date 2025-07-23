@@ -26,7 +26,7 @@ done
 
 echo '### AIX #########################################################'
 
-stages="stp,testta2,11T4 stp,testta2,19Pt stp,testta2,14T4"
+stages="stp,testta2,11T4 stp,testta2,19Pt stp,testta2,14T4 stp,testta2,15T5"
 for UMG in ${stages}
 do
     cd /tmp/ || exit 1
