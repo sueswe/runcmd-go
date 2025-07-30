@@ -16,7 +16,7 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.6"
+var version string = "0.6.7"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -161,6 +161,10 @@ func main() {
 
 	user := os.Getenv("USER")
 	host := os.Getenv("HOSTNAME")
+	if len(host) == 0 {
+		host = os.Getenv("cHOSTNAME")
+	}
+
 	yyyymmdd := os.Getenv("SMA_SCHEDULE_DATE")
 	if len(yyyymmdd) == 0 {
 		yyyymmdd = "NO_SMA_SCHEDULE_DATE"
@@ -205,7 +209,7 @@ func main() {
 	if os.Getenv("RUNCMD_DRY") != "" {
 		returncode = 0
 		t := time.Now()
-		r := "undef"
+		r := "dry_run"
 		fmt.Println(command, parameter)
 		writeLog(whereToLogTo, yyyymmdd+"; "+t.Format(time.RFC3339)+"; "+jobname+"; "+command+"; "+parameterlist+"; "+"t(s): "+runtime+"; "+"returncode: "+r+"\n")
 		infoLog.Println("(Just RUNCMD_DRY exported. Nothing happened.)")
