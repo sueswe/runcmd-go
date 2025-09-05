@@ -30,7 +30,7 @@ rm -v /tmp/${name}
 
 
 echo '### AIX #########################################################'
-stages="stp,testta2,11T4 stp,testta2,12Te stp,testta2,13T1 stp,testta2,14T4 stp,testta2,15T5 stp,testta2,16T1 stp,testta2,17T2 stp,testta2,18T2 stp,testta2,19Pt"
+stages="stp,testta2"
 cd /tmp/ || exit 1
 cp ${name}.aix ${name}
 for UMG in ${stages}
