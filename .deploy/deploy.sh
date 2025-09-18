@@ -17,7 +17,7 @@ echo "------------------------------------"
 masterrtc=0
 
 echo '### LINUX #########################################################'
-stages="stp,testta3 lgkk,testta3 stplgk,test"
+stages="stp,entwta3 stp,testta3 lgkk,testta3 stplgk,test"
 for UMG in ${stages}
 do
     cd /tmp/ || exit 1
@@ -30,7 +30,7 @@ rm -v /tmp/${name}
 
 
 echo '### AIX #########################################################'
-stages="stp,testta2"
+stages="stp,testta2 stp,entwta2"
 cd /tmp/ || exit 1
 cp ${name}.aix ${name}
 for UMG in ${stages}
