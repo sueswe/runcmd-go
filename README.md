@@ -1,5 +1,7 @@
 # runcmd-go
 
+![build workflow](https://github.com/sueswe/runcmd-go/actions/workflows/go.yml/badge.svg?event=push)
+
 runcmd, written in Go.
 
 Used for logging in automation and batch processing, etc.
