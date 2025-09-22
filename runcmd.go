@@ -16,12 +16,12 @@ import (
 )
 
 var REV = "DEV"
-var version string = "0.6.7"
+var version string = "0.6.8"
 var configFile string = os.Getenv("HOME") + "/.runcmd.toml"
 var home = os.Getenv("HOME")
 var infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 var debugLog = log.New(os.Stdout, "DEBUG\t", log.Ldate|log.Ltime|log.Lshortfile)
-var errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
+var errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime)
 
 // check the error
 func CheckErr(e error) {
